@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
+import pool from './config/db';
 
 dotenv.config();
 
@@ -29,8 +30,16 @@ app.use((req: Request, res: Response) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
+
+  // Test database connection
+  try {
+    await pool.query('SELECT 1');
+    console.log('✅ Database connected');
+  } catch (error) {
+    console.error('❌ Database connection failed');
+  }
 });

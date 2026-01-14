@@ -13,12 +13,10 @@ const pool = new Pool({
   connectionString
 });
 
-pool.on('connect', () => {
-  console.log('✅ Database connected');
-});
 
 pool.on('error', (err) => {
-  console.error('❌ Database connection error:', err);
+  console.error('❌ Database connection error:', err.message);
+  // Don't crash the app - just log the error
 });
 
 export default pool;

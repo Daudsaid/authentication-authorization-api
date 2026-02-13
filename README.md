@@ -1,198 +1,272 @@
-# Advanced Authentication & Authorization API
+# 🔐 Authentication & Authorization API
 
-A production-ready authentication API built with Node.js, TypeScript, Express, and PostgreSQL featuring JWT tokens, refresh tokens, RBAC, email verification, and password reset functionality.
+**Built by [Daud Abdi](https://linkedin.com/in/daudabdi0506)**
 
-## Features
+🌐 **Live Demo:** http://3.10.174.145:4000  
+💻 **GitHub:** [View Source](https://github.com/Daudsaid/authentication-authorization-api)  
+📧 **Contact:** daudsaidabdi@gmail.com  
+📱 **Portfolio:** [daud-abdi-portfolio-site.vercel.app](https://daud-abdi-portfolio-site.vercel.app)
 
-- 🔐 **JWT Authentication** - Access tokens (15min) & refresh tokens (7 days)
-- 👤 **User Management** - Registration, login, profile
-- ✉️ **Email Verification** - Token-based email verification system
-- 🔄 **Password Reset** - Secure password reset with expiring tokens
-- 🛡️ **Role-Based Access Control (RBAC)** - User and admin roles
-- 🔒 **Secure Password Hashing** - bcrypt with salt rounds
-- ✅ **Comprehensive Testing** - Jest & Supertest with 8 test cases
-- 📝 **TypeScript** - Full type safety
+---
 
-## Tech Stack
+A production-ready authentication and authorization API built with Node.js, Express, TypeScript, and PostgreSQL. Deployed on AWS infrastructure with JWT-based authentication, email verification, and role-based access control.
 
-- **Runtime:** Node.js
-- **Language:** TypeScript
-- **Framework:** Express.js
-- **Database:** PostgreSQL
-- **Authentication:** JWT (jsonwebtoken)
-- **Password Hashing:** bcrypt
-- **Testing:** Jest, Supertest
-- **Email:** Nodemailer
+## ✨ Features
 
-## API Endpoints
+- 🔐 User registration with email verification
+- 🎫 JWT-based authentication (access + refresh tokens)
+- 🔄 Automatic token refresh mechanism
+- 🔑 Secure password reset flow
+- 👥 Role-based access control (user/admin)
+- 📧 Email notifications (verification, password reset)
+- 🛡️ bcrypt password hashing
+- ✅ Input validation and error handling
+- 🧪 Comprehensive test coverage with Jest
 
-### Public Routes
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/verify-email?token=TOKEN` - Verify email
-- `POST /api/auth/request-password-reset` - Request password reset
-- `POST /api/auth/reset-password` - Reset password
-- `POST /api/auth/refresh` - Refresh access token
-- `POST /api/auth/logout` - Logout (invalidate refresh token)
+## 🛠️ Tech Stack
 
-### Protected Routes
-- `GET /api/auth/profile` - Get user profile (requires authentication)
-- `GET /api/auth/admin` - Admin only route (requires admin role)
+**Backend:**
+- Node.js
+- Express.js
+- TypeScript
+- PostgreSQL
+- JWT (jsonwebtoken)
+- bcrypt
 
-## Installation
+**Deployment:**
+- AWS EC2 (Ubuntu 24.04)
+- AWS RDS (PostgreSQL)
+- PM2 Process Manager
+- SSL/TLS Database Connection
 
-1. Clone the repository
+**Testing:**
+- Jest
+- Supertest
+
+## 📡 API Endpoints
+
+### Public Endpoints
+
+#### Register User
+```bash
+POST http://3.10.174.145:4000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "email": "john@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+#### Login
+```bash
+POST http://3.10.174.145:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+#### Refresh Token
+```bash
+POST http://3.10.174.145:4000/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "your_refresh_token_here"
+}
+```
+
+#### Forgot Password
+```bash
+POST http://3.10.174.145:4000/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "john@example.com"
+}
+```
+
+### Protected Endpoints
+
+#### Get User Profile
+```bash
+GET http://3.10.174.145:4000/api/auth/profile
+Authorization: Bearer your_access_token_here
+```
+
+### Utility Endpoints
+
+#### Health Check
+```bash
+GET http://3.10.174.145:4000/health
+```
+
+#### API Info
+```bash
+GET http://3.10.174.145:4000/
+```
+
+## 🚀 Deployment Architecture
+```
+┌─────────────────────────────────┐
+│     AWS EC2 (Ubuntu 24.04)      │
+│   Node.js + Express + PM2       │
+│   Port: 4000                    │
+└─────────────┬───────────────────┘
+              │
+              │ SSL Connection
+              ▼
+┌─────────────────────────────────┐
+│   AWS RDS PostgreSQL 17.6       │
+│   - users table                 │
+│   - refresh_tokens table        │
+│   - password_reset_tokens       │
+└─────────────────────────────────┘
+```
+
+## 💻 Local Development Setup
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL 14+
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository**
 ```bash
 git clone https://github.com/Daudsaid/authentication-authorization-api.git
 cd authentication-authorization-api
 ```
 
-2. Install dependencies
+2. **Install dependencies**
 ```bash
 npm install
 ```
 
-3. Set up environment variables
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
+3. **Set up environment variables**
 
-4. Create PostgreSQL databases
-```bash
-psql -U your_user -d postgres -c "CREATE DATABASE authentication_authorization_api;"
-psql -U your_user -d postgres -c "CREATE DATABASE authentication_authorization_api_test;"
-```
-
-5. Run database migrations
-```bash
-psql -U your_user -d authentication_authorization_api -f database/schema.sql
-```
-
-## Environment Variables
+Create a `.env` file:
 ```env
 PORT=4000
-DATABASE_URL=postgresql://user@localhost:5432/authentication_authorization_api
-JWT_ACCESS_SECRET=your_access_secret
-JWT_REFRESH_SECRET=your_refresh_secret
+DATABASE_URL=postgresql://username:password@localhost:5432/auth_db
+JWT_ACCESS_SECRET=your_access_secret_here
+JWT_REFRESH_SECRET=your_refresh_secret_here
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your_email@gmail.com
 SMTP_PASS=your_app_password
 CLIENT_URL=http://localhost:3000
+NODE_ENV=development
 ```
 
-## Usage
+4. **Set up database**
+```bash
+# Create database
+createdb auth_db
 
-### Development
+# Run schema (see src/__tests__/setup/testDb.helper.ts for table definitions)
+```
+
+5. **Run development server**
 ```bash
 npm run dev
 ```
 
-### Production
+The API will be available at `http://localhost:4000`
+
+## 🧪 Testing
 ```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+## 📦 Production Build
+```bash
+# Build TypeScript to JavaScript
 npm run build
+
+# Start production server
 npm start
 ```
 
-### Testing
-```bash
-npm test                 # Run tests
-npm run test:watch       # Watch mode
-npm run test:coverage    # Coverage report
-```
+## 🔒 Security Features
 
-## Example Requests
-
-### Register
-```bash
-curl -X POST http://localhost:4000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "johndoe",
-    "email": "john@example.com",
-    "password": "securePassword123"
-  }'
-```
-
-### Login
-```bash
-curl -X POST http://localhost:4000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john@example.com",
-    "password": "securePassword123"
-  }'
-```
-
-### Get Profile
-```bash
-curl -X GET http://localhost:4000/api/auth/profile \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
-
-## Database Schema
-
-### Users Table
-- `id` - Serial primary key
-- `username` - Unique username
-- `email` - Unique email
-- `password` - Hashed password
-- `role` - User role (user/admin)
-- `is_verified` - Email verification status
-- `verification_token` - Email verification token
-- `created_at` - Timestamp
-- `updated_at` - Timestamp
-
-### Refresh Tokens Table
-- `id` - Serial primary key
-- `user_id` - Foreign key to users
-- `token` - Refresh token
-- `expires_at` - Token expiration
-- `created_at` - Timestamp
-
-### Password Reset Tokens Table
-- `id` - Serial primary key
-- `user_id` - Foreign key to users
-- `token` - Reset token
-- `expires_at` - Token expiration
-- `used` - Token usage status
-- `created_at` - Timestamp
-
-## Security Features
-
-- ✅ Password hashing with bcrypt
-- ✅ JWT token-based authentication
+- ✅ Password hashing with bcrypt (10 rounds)
+- ✅ JWT tokens with expiration
 - ✅ Refresh token rotation
-- ✅ Token expiration
-- ✅ Email verification
-- ✅ Password reset with expiring tokens
-- ✅ Role-based access control
-- ✅ SQL injection prevention (parameterized queries)
+- ✅ HTTPS/SSL database connections
+- ✅ Environment variable management
+- ✅ Input validation and sanitization
+- ✅ SQL injection protection (parameterized queries)
+- ✅ CORS configuration
 
-## Testing
+## 📊 Database Schema
+```sql
+users
+├── id (SERIAL PRIMARY KEY)
+├── username (VARCHAR UNIQUE)
+├── email (VARCHAR UNIQUE)
+├── password (VARCHAR - hashed)
+├── role (VARCHAR - 'user'/'admin')
+├── is_verified (BOOLEAN)
+├── verification_token (VARCHAR)
+├── created_at (TIMESTAMP)
+└── updated_at (TIMESTAMP)
 
-The API includes comprehensive test coverage:
+refresh_tokens
+├── id (SERIAL PRIMARY KEY)
+├── user_id (INTEGER FK → users.id)
+├── token (VARCHAR UNIQUE)
+├── expires_at (TIMESTAMP)
+└── created_at (TIMESTAMP)
 
-- User registration tests
-- Login authentication tests
-- Token validation tests
-- Protected route access tests
-- Error handling tests
-
-Run tests with:
-```bash
-npm test
+password_reset_tokens
+├── id (SERIAL PRIMARY KEY)
+├── user_id (INTEGER FK → users.id)
+├── token (VARCHAR UNIQUE)
+├── expires_at (TIMESTAMP)
+├── used (BOOLEAN)
+└── created_at (TIMESTAMP)
 ```
 
-## Author
+## 🎯 Future Enhancements
+
+- [ ] OAuth 2.0 integration (Google, GitHub)
+- [ ] Two-factor authentication (2FA)
+- [ ] Rate limiting middleware
+- [ ] API documentation with Swagger/OpenAPI
+- [ ] Docker containerization
+- [ ] CI/CD pipeline with GitHub Actions
+
+## 📄 License
+
+MIT License
+
+## 👤 Author
 
 **Daud Abdi**
+
+- Portfolio: [daud-abdi-portfolio-site.vercel.app](https://daud-abdi-portfolio-site.vercel.app)
+- LinkedIn: [linkedin.com/in/daudabdi0506](https://linkedin.com/in/daudabdi0506)
 - GitHub: [@Daudsaid](https://github.com/Daudsaid)
-- LinkedIn: [daudabdi0506](https://linkedin.com/in/daudabdi0506)
 - Email: daudsaidabdi@gmail.com
-- Portfolio: https://daud-abdi-portfolio-site.vercel.app/
 
-## License
+## 🙏 Acknowledgments
 
-MIT
+- Built as part of my full-stack development portfolio
+- Deployed on AWS to demonstrate cloud infrastructure skills
+- Following industry best practices for authentication systems
+
+---
+
+⭐ **If you found this project helpful, please consider giving it a star!**
+
+Made with ❤️ by Daud Abdi
